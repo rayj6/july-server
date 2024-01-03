@@ -26,6 +26,7 @@ app.use(errorHandler);
 _SideFunction.getHardwareInfo();
 _Bot.ChatBot(app);
 _Database.CheckConnection();
+_Database.BotDatabase(app);
 _SideFunction.HandleServerRuntimes();
 
 // Start the server
