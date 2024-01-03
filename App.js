@@ -13,6 +13,7 @@ const _Bot = new Bot();
 const _Database = new Database();
 
 app.use(express.static("public"));
+app.use(cors());
 
 function errorHandler(err, req, res, next) {
     res.status(500);

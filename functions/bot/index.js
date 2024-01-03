@@ -8,7 +8,7 @@ class Bot {
         app.use(bodyParser.urlencoded({ extended: true }));
 
         // Create a route to receive data and insert it into the database
-        app.post("/chatbot", async (req, res) => {
+        app.post("/botchat", async (req, res) => {
             const { question } = req.body;
             let userInput = question;
             const chatHistory = [];
@@ -34,9 +34,9 @@ class Bot {
                 console.log(colors.green("Bot: ") + completionText);
                 res.send(completionText);
 
-                // Update history with user input and assistant response
-                chatHistory.push(["user", userInput]);
-                chatHistory.push(["assistant", completionText]);
+                // // Update history with user input and assistant response
+                // chatHistory.push(["user", userInput]);
+                // chatHistory.push(["assistant", completionText]);
             } catch (error) {
                 console.error(colors.red(error));
             }
