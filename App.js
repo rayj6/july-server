@@ -3,12 +3,15 @@ const cors = require("cors");
 const colors = require("colors");
 
 const SideFunctions = require("./functions/sideFunctions/index");
+const Bot = require("./functions/bot/index.js");
+const Database = require("./functions/database/index.js");
 
 const app = express();
 const port = 3300;
 const _SideFunction = new SideFunctions();
+const _Bot = new Bot();
+const _Database = new Database();
 
-app.use(cors());
 app.use(express.static("public"));
 
 function errorHandler(err, req, res, next) {
@@ -21,6 +24,8 @@ function errorHandler(err, req, res, next) {
 
 app.use(errorHandler);
 _SideFunction.getHardwareInfo();
+_Bot.ChatBot(app);
+_Database.CheckConnection();
 _SideFunction.HandleServerRuntimes();
 
 // Start the server
