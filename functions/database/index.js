@@ -1,20 +1,6 @@
 const colors = require("colors");
 const connection = require("./database.config");
 const bodyParser = require("body-parser");
-const CryptoJS = require("react-native-crypto-js");
-
-const KEY = "ADMIN7124_";
-
-function encryptString(plaintext, secretKey) {
-    const encryptedText = CryptoJS.AES.encrypt(plaintext, secretKey).toString();
-    return encryptedText;
-}
-
-function decryptString(encryptedText, secretKey) {
-    const bytes = CryptoJS.AES.decrypt(encryptedText, secretKey);
-    const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
-    return decryptedText;
-}
 
 class Database {
     CheckConnection() {
