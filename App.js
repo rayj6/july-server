@@ -23,11 +23,15 @@ function errorHandler(err, req, res, next) {
     res.json({ error: err.message });
 }
 
+const randomString = _SideFunction.GenerateRandomString(52);
 app.use(errorHandler);
 _SideFunction.getHardwareInfo();
 _Bot.ChatBot(app);
 _Database.CheckConnection();
 _Database.BotDatabase(app);
+_Database.Register(app, randomString);
+_Database.Login(app);
+_Database.CheckUser(app);
 _SideFunction.HandleServerRuntimes();
 
 // Start the server

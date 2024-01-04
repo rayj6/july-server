@@ -31,12 +31,12 @@ class Bot {
                 // Get completion text/content
                 const completionText = completion.data.choices[0].message.content;
 
-                console.log(colors.green("Bot: ") + completionText);
+                // console.log(colors.green("\nBot: ") + completionText);
                 res.send(completionText);
 
                 // // Update history with user input and assistant response
-                // chatHistory.push(["user", userInput]);
-                // chatHistory.push(["assistant", completionText]);
+                chatHistory.push(["user", userInput]);
+                chatHistory.push(["assistant", completionText]);
             } catch (error) {
                 console.error(colors.red(error));
             }
