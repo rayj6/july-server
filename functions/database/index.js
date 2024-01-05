@@ -54,7 +54,6 @@ class Database {
                 if (err) {
                     console.error("Error registering user:", err);
                     console.log("Internal server error");
-                } else {
                 }
             }
         );
