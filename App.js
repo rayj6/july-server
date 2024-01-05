@@ -14,6 +14,11 @@ const _Database = new Database();
 
 app.use(express.static("public"));
 app.use(cors());
+app.use((req, res, next) => {
+    const clientIP = req.headers["x-forwarded-for"] || req.ip || req.connection.remoteAddress;
+    console.log(`\tReceived a ${colors.green(req.method)} request to ${colors.green(req.path)} from ${colors.green(clientIP)}`);
+    next(); // Call the next middleware in the chain
+});
 
 function errorHandler(err, req, res, next) {
     res.status(500);

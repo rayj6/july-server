@@ -34,6 +34,32 @@ class Database {
         });
     }
 
+    SendBotData(userid, chatQuestion, chatAnswer) {
+        function _getCurrentDateTime() {
+            const now = new Date();
+
+            const day = now.getDate(); // Returns the day of the month (1-31)
+            const month = now.getMonth() + 1; // Returns the month (0-11); adding 1 to make it 1-12
+            const year = now.getFullYear(); // Returns the year (4 digits)
+            const hour = now.getHours();
+            const minute = now.getMinutes();
+
+            return `${day}|${month}|${year}_${hour}:${minute}`;
+        }
+
+        connection.query(
+            "INSERT INTO History (userid, chatQuestion, chatAnswer, date) VALUES (?, ?, ?, ?)",
+            [userid, chatQuestion, chatAnswer, _getCurrentDateTime()],
+            (err, result) => {
+                if (err) {
+                    console.error("Error registering user:", err);
+                    console.log("Internal server error");
+                } else {
+                }
+            }
+        );
+    }
+
     Login(app) {
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: true }));

@@ -1,6 +1,9 @@
 const openai = require("./chatbot.config.js");
 const colors = require("colors");
 const bodyParser = require("body-parser");
+const Database = require("../database/index.js");
+
+const _Database = new Database();
 
 class Bot {
     ChatBot(app) {
@@ -9,7 +12,7 @@ class Bot {
 
         // Create a route to receive data and insert it into the database
         app.post("/botchat", async (req, res) => {
-            const { question } = req.body;
+            const { userid, question } = req.body;
             let userInput = question;
             const chatHistory = [];
             try {
@@ -37,6 +40,9 @@ class Bot {
                 // // Update history with user input and assistant response
                 chatHistory.push(["user", userInput]);
                 chatHistory.push(["assistant", completionText]);
+
+                // ----------------------------------------------------------------
+                _Database.SendBotData(userid, question, completionText);
             } catch (error) {
                 console.error(colors.red(error));
             }
