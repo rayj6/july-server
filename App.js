@@ -44,4 +44,10 @@ app.listen(port, () => {
     console.clear();
     console.log("Server is running on port: " + colors.green(`${port}`));
     console.log("Follow this link to access server: " + colors.green(`http://localhost:${port}`));
+    console.log("Available at: " + colors.yellow("/botchat"));
+    console.log("Available at: " + colors.yellow("/botHistory"));
+    console.log("Available at: " + colors.yellow("/botUsers"));
+    console.log("Available at: " + colors.yellow("/authentication/login"));
+    console.log("Available at: " + colors.yellow("/authentication/checkuser"));
+    console.log("Available at: " + colors.yellow("/authentication/register"));
 });

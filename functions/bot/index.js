@@ -1,4 +1,3 @@
-const openai = require("./chatbot.config.js");
 const colors = require("colors");
 const bodyParser = require("body-parser");
 const Database = require("../database/index.js");
@@ -11,41 +10,82 @@ class Bot {
         app.use(bodyParser.urlencoded({ extended: true }));
 
         // Create a route to receive data and insert it into the database
-        app.post("/botchat", async (req, res) => {
+        app.post("/bot-takenote", async (req, res) => {
             const { userid, question } = req.body;
-            let userInput = question;
-            const chatHistory = [];
-            try {
-                // Construct messages by iterating over the history
-                const messages = chatHistory.map(([role, content]) => ({
-                    role,
-                    content,
-                }));
 
-                // Add latest user input
-                messages.push({ role: "user", content: userInput });
+            // Spawn a Python process
+            const pythonProcess = spawn("python3", ["./BotCollection/TakeNote.py", question]);
 
-                // Call the API with user input & history
-                const completion = await openai.createChatCompletion({
-                    model: "gpt-3.5-turbo",
-                    messages: messages,
-                });
+            // Capture Python script output
+            pythonProcess.stdout.on("data", (data) => {
+                const pythonOutput = data.toString();
+                console.log(colors.green(`Python Output: ${pythonOutput}`));
+                res.send(`server Output: ${pythonOutput}`);
+                _Database.SendNoteData(userid, question, pythonOutput);
+            });
 
-                // Get completion text/content
-                const completionText = completion.data.choices[0].message.content;
+            // Handle errors
+            pythonProcess.stderr.on("data", (data) => {
+                console.error(`Python Error: ${data}`);
+                res.status(500).send(`Python Error: ${data}`);
+            });
 
-                // console.log(colors.green("\nBot: ") + completionText);
-                res.send(completionText);
+            // Handle process exit
+            pythonProcess.on("close", (code) => {
+                console.log(`Python process exited with code ${code}`);
+            });
+        });
 
-                // // Update history with user input and assistant response
-                chatHistory.push(["user", userInput]);
-                chatHistory.push(["assistant", completionText]);
+        app.post("/bot-chat", async (req, res) => {
+            const { userid, question } = req.body;
 
-                // ----------------------------------------------------------------
-                _Database.SendBotData(userid, question, completionText);
-            } catch (error) {
-                console.error(colors.red(error));
-            }
+            // Spawn a Python process
+            const pythonProcess = spawn("python3", ["./BotCollection/Chat.py", question]);
+
+            // Capture Python script output
+            pythonProcess.stdout.on("data", (data) => {
+                const pythonOutput = data.toString();
+                console.log(colors.green(`Python Output: ${pythonOutput}`));
+                res.send(`server Output: ${pythonOutput}`);
+                _Database.SendChatData(userid, question, pythonOutput);
+            });
+
+            // Handle errors
+            pythonProcess.stderr.on("data", (data) => {
+                console.error(`Python Error: ${data}`);
+                res.status(500).send(`Python Error: ${data}`);
+            });
+
+            // Handle process exit
+            pythonProcess.on("close", (code) => {
+                console.log(`Python process exited with code ${code}`);
+            });
+        });
+
+        app.post("/bot-health", async (req, res) => {
+            const { userid, question } = req.body;
+
+            // Spawn a Python process
+            const pythonProcess = spawn("python3", ["./BotCollection/Health.py", question]);
+
+            // Capture Python script output
+            pythonProcess.stdout.on("data", (data) => {
+                const pythonOutput = data.toString();
+                console.log(colors.green(`Python Output: ${pythonOutput}`));
+                res.send(`server Output: ${pythonOutput}`);
+                _Database.SendHealthData(userid, question, pythonOutput);
+            });
+
+            // Handle errors
+            pythonProcess.stderr.on("data", (data) => {
+                console.error(`Python Error: ${data}`);
+                res.status(500).send(`Python Error: ${data}`);
+            });
+
+            // Handle process exit
+            pythonProcess.on("close", (code) => {
+                console.log(`Python process exited with code ${code}`);
+            });
         });
     }
 }

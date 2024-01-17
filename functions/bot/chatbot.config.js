@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const configuration = new Configuration({
+    organization: "org-5k7de3GXzRydd75v8NgCSIro",
     apiKey: process.env.OPENAI_API_KEY,
 });
 

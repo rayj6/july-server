@@ -22,7 +22,7 @@ class SideFunctions {
 
             // Format the time as "hour:minute:second"
             const formattedTime =
-                "Running time: " + colors.green(`${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`);
+                "Running time: " + colors.yellow(`${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`);
 
             // Move the cursor to the beginning of the line and clear the line
             process.stdout.write("\r\x1b[K");
@@ -51,6 +51,18 @@ class SideFunctions {
             result += characters.charAt(randomIndex);
         }
         return result;
+    }
+
+    GetCurrentDateTime() {
+        const now = new Date();
+
+        const day = now.getDate(); // Returns the day of the month (1-31)
+        const month = now.getMonth() + 1; // Returns the month (0-11); adding 1 to make it 1-12
+        const year = now.getFullYear(); // Returns the year (4 digits)
+        const hour = now.getHours();
+        const minute = now.getMinutes();
+
+        return `${day}|${month}|${year}_${hour}:${minute}`;
     }
 }
 

@@ -1,6 +1,9 @@
 const colors = require("colors");
 const connection = require("./database.config");
 const bodyParser = require("body-parser");
+const SideFunctions = require("../sideFunctions/index");
+
+const _SideFunction = new SideFunctions();
 
 class Database {
     CheckConnection() {
@@ -34,22 +37,36 @@ class Database {
         });
     }
 
-    SendBotData(userid, chatQuestion, chatAnswer) {
-        function _getCurrentDateTime() {
-            const now = new Date();
-
-            const day = now.getDate(); // Returns the day of the month (1-31)
-            const month = now.getMonth() + 1; // Returns the month (0-11); adding 1 to make it 1-12
-            const year = now.getFullYear(); // Returns the year (4 digits)
-            const hour = now.getHours();
-            const minute = now.getMinutes();
-
-            return `${day}|${month}|${year}_${hour}:${minute}`;
-        }
-
+    SendChatData(userid, chatQuestion, chatAnswer) {
         connection.query(
             "INSERT INTO History (userid, chatQuestion, chatAnswer, date) VALUES (?, ?, ?, ?)",
-            [userid, chatQuestion, chatAnswer, _getCurrentDateTime()],
+            [userid, chatQuestion, chatAnswer, _SideFunction.GetCurrentDateTime()],
+            (err, result) => {
+                if (err) {
+                    console.error("Error registering user:", err);
+                    console.log("Internal server error");
+                }
+            }
+        );
+    }
+
+    SendHealthData(userid, chatQuestion, chatAnswer) {
+        connection.query(
+            "INSERT INTO History (userid, chatQuestion, chatAnswer, date) VALUES (?, ?, ?, ?)",
+            [userid, chatQuestion, chatAnswer, _SideFunction.GetCurrentDateTime()],
+            (err, result) => {
+                if (err) {
+                    console.error("Error registering user:", err);
+                    console.log("Internal server error");
+                }
+            }
+        );
+    }
+
+    SendNoteData(userid, chatQuestion, chatAnswer) {
+        connection.query(
+            "INSERT INTO History (userid, chatQuestion, chatAnswer, date) VALUES (?, ?, ?, ?)",
+            [userid, chatQuestion, chatAnswer, _SideFunction.GetCurrentDateTime()],
             (err, result) => {
                 if (err) {
                     console.error("Error registering user:", err);
