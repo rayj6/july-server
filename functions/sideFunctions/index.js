@@ -1,5 +1,6 @@
 const colors = require("colors");
 const si = require("systeminformation");
+const nodemailer = require("nodemailer");
 
 class SideFunctions {
     HandleServerRuntimes() {
@@ -63,6 +64,33 @@ class SideFunctions {
         const minute = now.getMinutes();
 
         return `${day}|${month}|${year}_${hour}:${minute}`;
+    }
+
+    SendEmail(content, to) {
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: "littlejuly@gmail.com",
+                pass: "Admin4126@",
+            },
+        });
+
+        // Email options
+        const mailOptions = {
+            from: "littlejuly@gmail.com",
+            to: to,
+            subject: "Subject of your email",
+            text: "Body of your email",
+        };
+
+        // Send email
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error(error);
+            } else {
+                console.log("Email sent: " + info.response);
+            }
+        });
     }
 }
 
