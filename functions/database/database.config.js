@@ -4,7 +4,7 @@ const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "",
-    database: "july",
+    database: "July",
     port: 3307,
     // host: "0.tcp.ap.ngrok.io",
     // user: "root",

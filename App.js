@@ -29,6 +29,7 @@ function errorHandler(err, req, res, next) {
 }
 
 const randomString = _SideFunction.GenerateRandomString(52);
+const newString = _SideFunction.GenerateRandomString(8);
 app.use(errorHandler);
 _SideFunction.getHardwareInfo();
 _Bot.ChatBot(app);
@@ -37,6 +38,7 @@ _Database.BotDatabase(app);
 _Database.Register(app, randomString);
 _Database.Login(app);
 _Database.CheckUser(app);
+_Database.Recovery(app, newString);
 _SideFunction.HandleServerRuntimes();
 
 // Start the server
@@ -44,10 +46,12 @@ app.listen(port, () => {
     console.clear();
     console.log("Server is running on port: " + colors.green(`${port}`));
     console.log("Follow this link to access server: " + colors.green(`http://localhost:${port}`));
-    console.log("Available at: " + colors.yellow("/botchat"));
-    console.log("Available at: " + colors.yellow("/botHistory"));
-    console.log("Available at: " + colors.yellow("/botUsers"));
-    console.log("Available at: " + colors.yellow("/authentication/login"));
-    console.log("Available at: " + colors.yellow("/authentication/checkuser"));
-    console.log("Available at: " + colors.yellow("/authentication/register"));
+    console.log("Available at: " + colors.yellow("/api/botchat"));
+    console.log("Available at: " + colors.yellow("/api/botHistory"));
+    console.log("Available at: " + colors.yellow("/api/botUsers"));
+    console.log("Available at: " + colors.yellow("/api/authentication/login"));
+    console.log("Available at: " + colors.yellow("/api/authentication/checkuser"));
+    console.log("Available at: " + colors.yellow("/api/authentication/register"));
+    console.log("Available at: " + colors.yellow("/api/authentication/updatePassword"));
+    console.log("----------------------------------------------------------------");
 });

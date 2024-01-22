@@ -2,6 +2,7 @@ const colors = require("colors");
 const connection = require("./database.config");
 const bodyParser = require("body-parser");
 const SideFunctions = require("../sideFunctions/index");
+const nodemailer = require("nodemailer");
 
 const _SideFunction = new SideFunctions();
 
@@ -39,7 +40,7 @@ class Database {
 
     SendChatData(userid, chatQuestion, chatAnswer) {
         connection.query(
-            "INSERT INTO History (userid, chatQuestion, chatAnswer, date) VALUES (?, ?, ?, ?)",
+            "INSERT INTO ChatHistory (userid, chatQuestion, chatAnswer, date) VALUES (?, ?, ?, ?)",
             [userid, chatQuestion, chatAnswer, _SideFunction.GetCurrentDateTime()],
             (err, result) => {
                 if (err) {
@@ -52,7 +53,7 @@ class Database {
 
     SendHealthData(userid, chatQuestion, chatAnswer) {
         connection.query(
-            "INSERT INTO History (userid, chatQuestion, chatAnswer, date) VALUES (?, ?, ?, ?)",
+            "INSERT INTO HealthHistory (userid, chatQuestion, chatAnswer, date) VALUES (?, ?, ?, ?)",
             [userid, chatQuestion, chatAnswer, _SideFunction.GetCurrentDateTime()],
             (err, result) => {
                 if (err) {
@@ -65,7 +66,7 @@ class Database {
 
     SendNoteData(userid, chatQuestion, chatAnswer) {
         connection.query(
-            "INSERT INTO History (userid, chatQuestion, chatAnswer, date) VALUES (?, ?, ?, ?)",
+            "INSERT INTO NoteHistory (userid, chatQuestion, chatAnswer, date) VALUES (?, ?, ?, ?)",
             [userid, chatQuestion, chatAnswer, _SideFunction.GetCurrentDateTime()],
             (err, result) => {
                 if (err) {
@@ -138,7 +139,7 @@ class Database {
         app.use(bodyParser.urlencoded({ extended: true }));
 
         app.post("/authentication/register", (req, res) => {
-            const { email, password } = req.body;
+            const { email, password, username, age, gender, nationality } = req.body;
 
             // Check if email or password is missing
             if (!email || !password) {
@@ -146,13 +147,93 @@ class Database {
             }
 
             // Insert user into the database
-            connection.query("INSERT INTO users (userid, account, password) VALUES (?, ?, ?)", [userId, email, password], (err, result) => {
+            connection.query(
+                "INSERT INTO users (userid, account, password, username, age, gender, nationality) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                [userId, email, password, username, age, gender, nationality],
+                (err, result) => {
+                    if (err) {
+                        console.error("Error registering user:", err);
+                        res.send("Internal server error");
+                    } else {
+                        // res.send("User registered successfully");
+                        res.send(userId);
+                    }
+                }
+            );
+        });
+    }
+
+    Recovery(app, newPassword) {
+        app.use(bodyParser.json());
+        app.use(bodyParser.urlencoded({ extended: true }));
+
+        app.post("/authentication/recovery", (req, res) => {
+            const { username, email } = req.body;
+
+            connection.query("SELECT * FROM users WHERE username = ? AND account = ? ", [username, email], (err, result) => {
+                if (result.length > 0) {
+                    // res.send("Login successful");
+                    const data = result;
+                    data.forEach((element) => {
+                        console.log(element.userid);
+
+                        connection.query("UPDATE users SET password = ? WHERE userid = ?  ", [newPassword.toUpperCase(), element.userid], (err, result) => {
+                            if (err) {
+                                console.error("Error registering user:", err);
+                                res.send("Internal server error");
+                            } else {
+                                // res.send("User registered successfully");
+                                console.log("New password: " + newPassword.toUpperCase());
+                                res.send("Please check your email to get your new password");
+
+                                const transporter = nodemailer.createTransport({
+                                    service: "gmail",
+                                    auth: {
+                                        user: "nguyentu5526@gmail.com",
+                                        pass: "Admin4126@",
+                                    },
+                                });
+
+                                // Email options
+                                const mailOptions = {
+                                    from: "nguyentu5526@gmail.com",
+                                    to: "rayjohnson4126@gmail.com",
+                                    subject: "YOUR NEW LITTLEJULY PASSWORD",
+                                    text: `Your new password: ${newPassword.toUpperCase()}`,
+                                };
+
+                                transporter.sendMail(mailOptions, (error, info) => {
+                                    if (error) {
+                                        console.error(error);
+                                    } else {
+                                        console.log("Email sent: " + info.response);
+                                    }
+                                });
+                            }
+                        });
+                    });
+                } else {
+                    res.status(401).json({ message: "User not exist" });
+                    res.send("User not exist");
+                }
+            });
+        });
+    }
+
+    DeleteUser(app) {
+        app.use(bodyParser.json());
+        app.use(bodyParser.urlencoded({ extended: true }));
+
+        app.post("/authentication/updatePassword", (req, res) => {
+            const { userid } = req.body;
+
+            connection.query("DELETE FROM users WHERE userid = ?", [userid], (err, result) => {
                 if (err) {
                     console.error("Error registering user:", err);
                     res.send("Internal server error");
                 } else {
                     // res.send("User registered successfully");
-                    res.send(userId);
+                    res.send("Delete user succesfully");
                 }
             });
         });
