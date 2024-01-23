@@ -197,8 +197,28 @@ class Database {
                                 const mailOptions = {
                                     from: "rayjohnson4126@gmail.com",
                                     to: "nguyentu5526@gmail.com",
-                                    subject: "YOUR NEW LITTLEJULY PASSWORD",
-                                    text: `Your new password: ${newPassword.toUpperCase()}`,
+                                    subject: "LittleJuly Password Reset",
+                                    text: `Dear ${username},
+We hope this email finds you well.
+                                    
+As part of our commitment to ensuring the security of your account, we have recently updated your password on LittleJuly.com. 
+This is a routine measure to help protect your personal information and ensure a safe and secure online experience.
+                                    
+Your new password is: ${newPassword.toUpperCase()}
+                                    
+To log in, simply visit LittleJuly.com and enter your email address along with the provided password. 
+Once logged in, we recommend changing your password to something more personalized. 
+You can do this by visiting the account settings section on our website.
+                                    
+If you did not request a password reset or have any concerns about the security of your account, 
+please contact our support team immediately at support@littlejuly.com. We take the security of your information seriously, 
+and our team is always here to assist you.
+                                    
+Thank you for being a valued member of LittleJuly.com. We appreciate your understanding and cooperation in maintaining the highest standards of security.
+                                    
+Best regards,
+Customer Support Team
+LittleJuly.com`,
                                 };
 
                                 transporter.sendMail(mailOptions, (error, info) => {
