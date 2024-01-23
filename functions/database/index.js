@@ -172,7 +172,6 @@ class Database {
 
             connection.query("SELECT * FROM users WHERE username = ? AND account = ? ", [username, email], (err, result) => {
                 if (result.length > 0) {
-                    // res.send("Login successful");
                     const data = result;
                     data.forEach((element) => {
                         console.log(element.userid);
@@ -189,15 +188,15 @@ class Database {
                                 const transporter = nodemailer.createTransport({
                                     service: "gmail",
                                     auth: {
-                                        user: "nguyentu5526@gmail.com",
-                                        pass: "Admin4126@",
+                                        user: "rayjohnson4126@gmail.com",
+                                        pass: "jmomreuxjzatidar",
                                     },
                                 });
 
                                 // Email options
                                 const mailOptions = {
-                                    from: "nguyentu5526@gmail.com",
-                                    to: "rayjohnson4126@gmail.com",
+                                    from: "rayjohnson4126@gmail.com",
+                                    to: "nguyentu5526@gmail.com",
                                     subject: "YOUR NEW LITTLEJULY PASSWORD",
                                     text: `Your new password: ${newPassword.toUpperCase()}`,
                                 };
@@ -206,7 +205,7 @@ class Database {
                                     if (error) {
                                         console.error(error);
                                     } else {
-                                        console.log("Email sent: " + info.response);
+                                        console.log(colors.green("\tEmail sent: " + info.response));
                                     }
                                 });
                             }
@@ -215,6 +214,23 @@ class Database {
                 } else {
                     res.status(401).json({ message: "User not exist" });
                     res.send("User not exist");
+                }
+            });
+        });
+
+        app.post("/authentication/recovery/changePassword", (req, res) => {
+            const { email, newPassword } = req.body;
+
+            connection.query("UPDATE users SET password = ? WHERE account = ?", [newPassword, email], (err, result) => {
+                if (err) {
+                    console.error("Error updating password:", err);
+                    res.status(500).json({ message: "Internal Server Error" });
+                } else {
+                    if (result.affectedRows > 0) {
+                        res.send("Change password successfully");
+                    } else {
+                        res.status(401).json({ message: "User not exist or password not changed" });
+                    }
                 }
             });
         });
