@@ -219,19 +219,42 @@ class Database {
         });
 
         app.post("/authentication/recovery/changePassword", (req, res) => {
-            const { email, newPassword } = req.body;
+            const { email, password, newPassword } = req.body;
 
-            connection.query("UPDATE users SET password = ? WHERE account = ?", [newPassword, email], (err, result) => {
-                if (err) {
-                    console.error("Error updating password:", err);
-                    res.status(500).json({ message: "Internal Server Error" });
-                } else {
-                    if (result.affectedRows > 0) {
-                        res.send("Change password successfully");
-                    } else {
-                        res.status(401).json({ message: "User not exist or password not changed" });
+            connection.beginTransaction((err) => {
+                if (err) throw err;
+
+                connection.query("SELECT * FROM users WHERE account = ? AND password = ?", [email, password], (err, results) => {
+                    if (err) {
+                        return connection.rollback(() => {
+                            throw err;
+                        });
                     }
-                }
+
+                    if (results.length > 0) {
+                        // If a row is found, update the password
+                        connection.query("UPDATE users SET password = ? WHERE account = ?", [newPassword, email], (err) => {
+                            if (err) {
+                                return connection.rollback(() => {
+                                    throw err;
+                                });
+                            }
+
+                            // Commit the transaction if all queries were successful
+                            connection.commit((err) => {
+                                if (err) {
+                                    return connection.rollback(() => {
+                                        throw err;
+                                    });
+                                }
+                                console.log("Password updated successfully!");
+                                res.send("Password updated successfully !");
+                            });
+                        });
+                    } else {
+                        res.send("Internal server error");
+                    }
+                });
             });
         });
     }
