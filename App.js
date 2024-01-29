@@ -5,6 +5,7 @@ const colors = require("colors");
 const SideFunctions = require("./functions/sideFunctions/index");
 const Bot = require("./functions/bot/index.js");
 const Database = require("./functions/database/index.js");
+const CreditCardPayment = require("./functions/payment/index.js");
 
 const app = express();
 const port = 3300;
@@ -23,7 +24,7 @@ app.use((req, res, next) => {
 function errorHandler(err, req, res, next) {
     res.status(500);
 
-    console.log(err);
+    console.log(colors.red("Disconnected"));
 
     res.json({ error: err.message });
 }
@@ -52,6 +53,7 @@ app.listen(port, () => {
     console.log("Available at: " + colors.yellow("/api/authentication/login"));
     console.log("Available at: " + colors.yellow("/api/authentication/checkuser"));
     console.log("Available at: " + colors.yellow("/api/authentication/register"));
-    console.log("Available at: " + colors.yellow("/api/authentication/updatePassword"));
+    console.log("Available at: " + colors.yellow("/api/authentication/recovery"));
+    console.log("Available at: " + colors.yellow("/api/authentication/recovery/changePassword"));
     console.log("----------------------------------------------------------------");
 });

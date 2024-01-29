@@ -174,60 +174,16 @@ class Database {
                 if (result.length > 0) {
                     const data = result;
                     data.forEach((element) => {
-                        console.log(element.userid);
-
                         connection.query("UPDATE users SET password = ? WHERE userid = ?  ", [newPassword.toUpperCase(), element.userid], (err, result) => {
                             if (err) {
                                 console.error("Error registering user:", err);
                                 res.send("Internal server error");
                             } else {
                                 // res.send("User registered successfully");
-                                console.log("New password: " + newPassword.toUpperCase());
+                                let GeneratedPassword = newPassword.toUpperCase();
                                 res.send("Please check your email to get your new password");
 
-                                const transporter = nodemailer.createTransport({
-                                    service: "gmail",
-                                    auth: {
-                                        user: "rayjohnson4126@gmail.com",
-                                        pass: "jmomreuxjzatidar",
-                                    },
-                                });
-
-                                // Email options
-                                const mailOptions = {
-                                    from: "rayjohnson4126@gmail.com",
-                                    to: "nguyentu5526@gmail.com",
-                                    subject: "LittleJuly Password Reset",
-                                    text: `Dear ${username},
-We hope this email finds you well.
-                                    
-As part of our commitment to ensuring the security of your account, we have recently updated your password on LittleJuly.com. 
-This is a routine measure to help protect your personal information and ensure a safe and secure online experience.
-                                    
-Your new password is: ${newPassword.toUpperCase()}
-                                    
-To log in, simply visit LittleJuly.com and enter your email address along with the provided password. 
-Once logged in, we recommend changing your password to something more personalized. 
-You can do this by visiting the account settings section on our website.
-                                    
-If you did not request a password reset or have any concerns about the security of your account, 
-please contact our support team immediately at support@littlejuly.com. We take the security of your information seriously, 
-and our team is always here to assist you.
-                                    
-Thank you for being a valued member of LittleJuly.com. We appreciate your understanding and cooperation in maintaining the highest standards of security.
-                                    
-Best regards,
-Customer Support Team
-LittleJuly.com`,
-                                };
-
-                                transporter.sendMail(mailOptions, (error, info) => {
-                                    if (error) {
-                                        console.error(error);
-                                    } else {
-                                        console.log(colors.green("\tEmail sent: " + info.response));
-                                    }
-                                });
+                                _SideFunction.SendEmail(username, GeneratedPassword);
                             }
                         });
                     });
